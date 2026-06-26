@@ -83,7 +83,7 @@ Update `apps/web/src/lib/pocketbaseClient.js` with your PocketBase URL if differ
 
 ## 🌐 Live Demo
 
-- **App:** [LIVE_VERCEL_URL_HERE]
+- **App:** [https://taskflow-web-n8zk.vercel.app/login]
 - **PocketBase backend:** [LIVE_POCKETHOST_URL_HERE]
 
 **Demo credentials:**
