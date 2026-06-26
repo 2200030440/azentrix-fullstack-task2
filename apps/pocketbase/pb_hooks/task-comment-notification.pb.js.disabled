@@ -1,0 +1,39 @@
+/// <reference path="../pb_data/types.d.ts" />
+onRecordAfterCreateSuccess((e) => {
+  const taskId = e.record.get("taskId");
+  const commentUserId = e.record.get("userId");
+  
+  // Find the task to get assignee and creator
+  const task = $app.findRecordById("tasks", taskId);
+  if (!task) {
+    e.next();
+    return;
+  }
+  
+  const assigneeId = task.get("assignee");
+  const taskCreatorId = task.get("createdBy");
+  
+  // Create notification for assignee if exists and is not the commenter
+  if (assigneeId && assigneeId !== commentUserId) {
+    const notif1 = new Record($app.findCollectionByNameOrId("notifications"));
+    notif1.set("userId", assigneeId);
+    notif1.set("type", "comment");
+    notif1.set("relatedTaskId", taskId);
+    notif1.set("relatedUserId", commentUserId);
+    notif1.set("read", false);
+    $app.save(notif1);
+  }
+  
+  // Create notification for task creator if different from assignee and not the commenter
+  if (taskCreatorId && taskCreatorId !== commentUserId && taskCreatorId !== assigneeId) {
+    const notif2 = new Record($app.findCollectionByNameOrId("notifications"));
+    notif2.set("userId", taskCreatorId);
+    notif2.set("type", "comment");
+    notif2.set("relatedTaskId", taskId);
+    notif2.set("relatedUserId", commentUserId);
+    notif2.set("read", false);
+    $app.save(notif2);
+  }
+  
+  e.next();
+}, "comments");

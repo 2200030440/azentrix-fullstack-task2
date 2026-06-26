@@ -1,0 +1,58 @@
+/// <reference path="../pb_data/types.d.ts" />
+onRecordCreate((e) => {
+  const boardId = e.record.get("boardId");
+  const userId = e.record.get("createdBy");
+  
+  const log = new Record($app.findCollectionByNameOrId("activityLogs"));
+  log.set("userId", userId);
+  log.set("boardId", boardId);
+  log.set("action", "created");
+  log.set("taskId", e.record.id);
+  log.set("details", "Task created: " + e.record.get("title"));
+  $app.save(log);
+  
+  e.next();
+}, "tasks");
+
+onRecordUpdate((e) => {
+  const boardId = e.record.get("boardId");
+  const userId = e.record.get("createdBy");
+  const original = e.record.original();
+  
+  // Detect what changed
+  let action = "edited";
+  let details = "Task updated";
+  
+  if (original.get("status") !== e.record.get("status")) {
+    action = "moved";
+    details = "Status changed from " + original.get("status") + " to " + e.record.get("status");
+  } else if (original.get("assignee") !== e.record.get("assignee")) {
+    action = "assigned";
+    details = "Task assigned";
+  }
+  
+  const log = new Record($app.findCollectionByNameOrId("activityLogs"));
+  log.set("userId", userId);
+  log.set("boardId", boardId);
+  log.set("action", action);
+  log.set("taskId", e.record.id);
+  log.set("details", details);
+  $app.save(log);
+  
+  e.next();
+}, "tasks");
+
+onRecordDelete((e) => {
+  const boardId = e.record.get("boardId");
+  const userId = e.record.get("createdBy");
+  
+  const log = new Record($app.findCollectionByNameOrId("activityLogs"));
+  log.set("userId", userId);
+  log.set("boardId", boardId);
+  log.set("action", "deleted");
+  log.set("taskId", e.record.id);
+  log.set("details", "Task deleted: " + e.record.get("title"));
+  $app.save(log);
+  
+  e.next();
+}, "tasks");

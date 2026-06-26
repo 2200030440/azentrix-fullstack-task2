@@ -1,0 +1,69 @@
+/// <reference path="../pb_data/types.d.ts" />
+onRecordCreate((e) => {
+  // This hook runs on task creation - check if due date is within 3 days
+  const dueDate = e.record.get("dueDate");
+  const assigneeId = e.record.get("assignee");
+  const status = e.record.get("status");
+  
+  if (!dueDate || !assigneeId || status === "done") {
+    e.next();
+    return;
+  }
+  
+  const today = new Date();
+  const due = new Date(dueDate);
+  const daysUntilDue = Math.floor((due - today) / (1000 * 60 * 60 * 24));
+  
+  if (daysUntilDue >= 0 && daysUntilDue <= 3) {
+    const notif = new Record($app.findCollectionByNameOrId("notifications"));
+    notif.set("userId", assigneeId);
+    notif.set("type", "duesoon");
+    notif.set("relatedTaskId", e.record.id);
+    notif.set("read", false);
+    $app.save(notif);
+  }
+  
+  e.next();
+}, "tasks");
+
+onRecordUpdate((e) => {
+  // Check if due date was updated or status changed
+  const original = e.record.original();
+  const dueDate = e.record.get("dueDate");
+  const assigneeId = e.record.get("assignee");
+  const status = e.record.get("status");
+  
+  const dueDateChanged = original.get("dueDate") !== dueDate;
+  const statusChanged = original.get("status") !== status;
+  
+  if (!dueDateChanged && !statusChanged) {
+    e.next();
+    return;
+  }
+  
+  if (!dueDate || !assigneeId || status === "done") {
+    e.next();
+    return;
+  }
+  
+  const today = new Date();
+  const due = new Date(dueDate);
+  const daysUntilDue = Math.floor((due - today) / (1000 * 60 * 60 * 24));
+  
+  if (daysUntilDue >= 0 && daysUntilDue <= 3) {
+    // Check if notification already exists
+    const existing = $app.findFirstRecordByFilter("notifications", 
+      "userId = '" + assigneeId + "' && type = 'duesoon' && relatedTaskId = '" + e.record.id + "'");
+    
+    if (!existing) {
+      const notif = new Record($app.findCollectionByNameOrId("notifications"));
+      notif.set("userId", assigneeId);
+      notif.set("type", "duesoon");
+      notif.set("relatedTaskId", e.record.id);
+      notif.set("read", false);
+      $app.save(notif);
+    }
+  }
+  
+  e.next();
+}, "tasks");
