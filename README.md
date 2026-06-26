@@ -97,6 +97,7 @@ Update `apps/web/src/lib/pocketbaseClient.js` with your PocketBase URL if differ
 ![Dashboard](./screenshots/dashboard.png)
 ![Board View](./screenshots/board.png)
 ![Login](./screenshots/login.png)
+![Kanban](./screenshots/kanban.png)
 
 ---
 
