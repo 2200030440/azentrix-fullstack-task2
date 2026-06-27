@@ -26,17 +26,19 @@ const Header = ({ onMenuClick }) => {
     : null;
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/70 backdrop-blur-md">
       <div className="flex h-16 items-center gap-4 px-4 lg:px-6">
         <Button variant="ghost" size="icon" className="lg:hidden" onClick={onMenuClick}>
           <Menu className="h-5 w-5" />
         </Button>
 
-        <Link to="/dashboard" className="flex items-center gap-2 font-bold text-xl">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-primary-foreground text-sm font-bold">TF</span>
+        <Link to="/dashboard" className="flex items-center gap-2.5 font-extrabold text-xl tracking-tight">
+          <div className="w-9 h-9 bg-gradient-to-tr from-primary to-violet-500 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+            <span className="text-primary-foreground text-base font-extrabold tracking-tighter">TF</span>
           </div>
-          <span className="hidden sm:inline">TaskFlow</span>
+          <span className="bg-gradient-to-r from-foreground via-foreground/90 to-foreground/75 bg-clip-text text-transparent hidden sm:inline">
+            TaskFlow
+          </span>
         </Link>
 
         <form onSubmit={handleSearch} className="flex-1 max-w-md mx-4">

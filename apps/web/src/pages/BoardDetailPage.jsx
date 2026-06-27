@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import pb from '@/lib/pocketbaseClient';
+import { cn } from '@/lib/utils';
 
 const BoardDetailPage = () => {
   const { id } = useParams();
@@ -31,6 +32,7 @@ const BoardDetailPage = () => {
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('todo');
+  const [draggedOverCol, setDraggedOverCol] = useState(null);
 
   useEffect(() => {
     fetchBoard();
@@ -114,6 +116,7 @@ const BoardDetailPage = () => {
 
   const handleDrop = async (e, newStatus) => {
     e.preventDefault();
+    setDraggedOverCol(null);
     const taskId = e.dataTransfer.getData('taskId');
     if (!taskId) return;
 
@@ -162,25 +165,33 @@ const BoardDetailPage = () => {
                 {columns.map((column) => (
                   <div
                     key={column.id}
-                    className="flex flex-col"
-                    onDragOver={(e) => e.preventDefault()}
+                    className={cn(
+                      "flex flex-col bg-secondary/25 border border-border/40 rounded-2xl p-4 transition-all duration-200 min-h-[400px]",
+                      draggedOverCol === column.id && "bg-primary/5 border-primary/30 ring-1 ring-primary/10 shadow-lg shadow-primary/5"
+                    )}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      if (draggedOverCol !== column.id) setDraggedOverCol(column.id);
+                    }}
+                    onDragLeave={() => setDraggedOverCol(null)}
                     onDrop={(e) => handleDrop(e, column.id)}
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
                         <h2 className="font-semibold text-lg">{column.title}</h2>
-                        <Badge variant="secondary">{column.tasks.length}</Badge>
+                        <Badge variant="secondary" className="bg-secondary text-secondary-foreground font-semibold">{column.tasks.length}</Badge>
                       </div>
                       <Button
                         size="sm"
                         variant="ghost"
+                        className="hover:bg-background/80"
                         onClick={() => handleCreateTask(column.id)}
                       >
                         <Plus className="h-4 w-4" />
                       </Button>
                     </div>
 
-                    <div className="space-y-3 flex-1 min-h-[200px]">
+                    <div className="space-y-3 flex-1 min-h-[200px] transition-all">
                       {column.tasks.map((task) => (
                         <TaskCard
                           key={task.id}
@@ -192,7 +203,7 @@ const BoardDetailPage = () => {
                       ))}
 
                       {column.tasks.length === 0 && (
-                        <div className="border-2 border-dashed rounded-lg p-8 text-center text-muted-foreground">
+                        <div className="border border-dashed border-border/60 rounded-xl p-8 text-center text-muted-foreground bg-background/25">
                           No tasks yet
                         </div>
                       )}

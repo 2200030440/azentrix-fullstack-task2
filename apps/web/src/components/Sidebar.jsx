@@ -27,23 +27,23 @@ const Sidebar = ({ isOpen, onClose }) => {
     <>
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm"
           onClick={onClose}
         />
       )}
       
       <aside className={cn(
-        "fixed top-0 left-0 z-50 h-full w-64 bg-card border-r transition-transform duration-300 lg:translate-x-0 lg:static",
+        "fixed top-0 left-0 z-50 h-full w-64 bg-sidebar border-r border-border/40 transition-transform duration-300 lg:translate-x-0 lg:static",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="flex items-center justify-between h-16 px-6 border-b lg:hidden">
-          <span className="font-bold text-xl">TaskFlow</span>
+        <div className="flex items-center justify-between h-16 px-6 border-b border-border/40 lg:hidden">
+          <span className="font-extrabold text-xl bg-gradient-to-r from-primary to-violet-500 bg-clip-text text-transparent">TaskFlow</span>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="h-5 w-5" />
           </Button>
         </div>
 
-        <nav className="p-4 space-y-1">
+        <nav className="p-4 space-y-1.5 mt-2">
           {filteredNavigation.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
@@ -54,10 +54,10 @@ const Sidebar = ({ isOpen, onClose }) => {
                 to={item.href}
                 onClick={onClose}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                  "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
                   isActive
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/15 font-semibold"
+                    : "text-muted-foreground hover:bg-secondary hover:text-secondary-foreground"
                 )}
               >
                 <Icon className="h-5 w-5" />

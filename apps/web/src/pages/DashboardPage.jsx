@@ -137,53 +137,61 @@ const DashboardPage = () => {
 
               {/* Stats Cards */}
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
+                <Card className="rounded-2xl border-border/40 bg-card/60 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-200">
                   <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-sm font-medium">Total Tasks</CardTitle>
-                    <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+                    <CardTitle className="text-sm font-semibold text-muted-foreground">Total Tasks</CardTitle>
+                    <div className="p-2 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl">
+                      <CheckCircle2 className="h-4 w-4" />
+                    </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{stats.total}</div>
+                  <CardContent className="pt-2">
+                    <div className="text-3xl font-extrabold tracking-tight">{stats.total}</div>
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="rounded-2xl border-border/40 bg-card/60 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-200">
                   <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-sm font-medium">Completed</CardTitle>
-                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <CardTitle className="text-sm font-semibold text-muted-foreground">Completed</CardTitle>
+                    <div className="p-2 bg-green-500/10 text-green-600 dark:text-green-400 rounded-xl">
+                      <CheckCircle2 className="h-4 w-4" />
+                    </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{stats.completed}</div>
-                    <p className="text-xs text-muted-foreground mt-1">
+                  <CardContent className="pt-2">
+                    <div className="text-3xl font-extrabold tracking-tight text-green-600 dark:text-green-400">{stats.completed}</div>
+                    <p className="text-xs text-muted-foreground mt-1 font-medium">
                       {completionRate}% completion rate
                     </p>
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="rounded-2xl border-border/40 bg-card/60 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-200">
                   <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-sm font-medium">Overdue</CardTitle>
-                    <AlertCircle className="h-4 w-4 text-destructive" />
+                    <CardTitle className="text-sm font-semibold text-muted-foreground">Overdue</CardTitle>
+                    <div className="p-2 bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-xl">
+                      <AlertCircle className="h-4 w-4" />
+                    </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{stats.overdue}</div>
+                  <CardContent className="pt-2">
+                    <div className="text-3xl font-extrabold tracking-tight text-rose-600 dark:text-rose-450">{stats.overdue}</div>
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="rounded-2xl border-border/40 bg-card/60 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-200">
                   <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-sm font-medium">Active Members</CardTitle>
-                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <CardTitle className="text-sm font-semibold text-muted-foreground">Active Members</CardTitle>
+                    <div className="p-2 bg-violet-500/10 text-violet-600 dark:text-violet-400 rounded-xl">
+                      <Users className="h-4 w-4" />
+                    </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{stats.activeMembers}</div>
+                  <CardContent className="pt-2">
+                    <div className="text-3xl font-extrabold tracking-tight">{stats.activeMembers}</div>
                   </CardContent>
                 </Card>
               </div>
 
               {/* Sprint Overview + Daily Standup */}
               <div className="grid gap-6 lg:grid-cols-2">
-                <Card>
+                <Card className="rounded-2xl border-border/40 bg-card/60 shadow-sm">
                   <CardHeader>
                     <CardTitle>Sprint Overview</CardTitle>
                   </CardHeader>
@@ -208,7 +216,7 @@ const DashboardPage = () => {
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="rounded-2xl border-border/40 bg-card/60 shadow-sm">
                   <CardHeader>
                     <CardTitle>Daily Standup</CardTitle>
                   </CardHeader>
@@ -259,10 +267,10 @@ const DashboardPage = () => {
               </div>
 
               {/* Activity Feed */}
-              <Card>
+              <Card className="rounded-2xl border-border/40 bg-card/60 shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Activity className="h-5 w-5" />
+                    <Activity className="h-5 w-5 text-primary" />
                     Team Activity Feed
                   </CardTitle>
                 </CardHeader>

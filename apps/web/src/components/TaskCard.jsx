@@ -14,9 +14,9 @@ import pb from '@/lib/pocketbaseClient';
 import { useAuth } from '@/contexts/AuthContext.jsx';
 
 const priorityColors = {
-  low: 'bg-blue-100 text-blue-800',
-  medium: 'bg-yellow-100 text-yellow-800',
-  high: 'bg-orange-100 text-orange-800',
+  low: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20',
+  medium: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
+  high: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20',
 };
 
 const TaskCard = ({
@@ -25,14 +25,14 @@ const TaskCard = ({
   onDelete,
   onOpenComments,
 }) => {
-  const { user } = useAuth();
+  const { currentUser } = useAuth();
   const assignee = task.expand?.assignee;
 
   // Permission check:
   // - Admins can edit/delete any card
   // - Members can only edit/delete cards assigned to them
-  const isAdmin = user?.role === 'admin';
-  const isOwnCard = task.assignee === user?.id;
+  const isAdmin = currentUser?.role === 'admin';
+  const isOwnCard = task.assignee === currentUser?.id;
   const canManage = isAdmin || isOwnCard;
 
   const assigneeAvatar =
@@ -77,11 +77,16 @@ const TaskCard = ({
         group
         cursor-grab
         active:cursor-grabbing
-        hover:shadow-lg
+        border border-border/45
+        bg-card/70
+        hover:bg-card
+        hover:border-primary/40
+        hover:shadow-md hover:shadow-primary/5
         transition-all
         duration-200
         select-none
         overflow-hidden
+        rounded-2xl
       "
     >
       <CardContent className="p-4">

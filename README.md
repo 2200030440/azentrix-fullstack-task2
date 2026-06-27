@@ -58,7 +58,7 @@ Remote teams lack a lightweight, self-hostable task collaboration tool. Most exi
 ### 1. Clone the repo
 ```bash
 git clone [YOUR_REPO_URL]
-cd scrum-taskboard
+cd azentrix-fullstack-task2
 ```
 
 ### 2. Start PocketBase
@@ -83,8 +83,8 @@ Update `apps/web/src/lib/pocketbaseClient.js` with your PocketBase URL if differ
 
 ## 🌐 Live Demo
 
-- **App:** [https://taskflow-web-n8zk.vercel.app/login]
-- **PocketBase backend:** [LIVE_POCKETHOST_URL_HERE]
+- **App:** https://taskflow-web-n8zk.vercel.app/login
+- **PocketBase backend:** Self-hosted PocketBase (local)
 
 **Demo credentials:**
 - Admin: `admin@taskflow.com` / `[password]`

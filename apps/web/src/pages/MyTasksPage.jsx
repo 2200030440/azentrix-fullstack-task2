@@ -39,8 +39,8 @@ const MyTasksPage = () => {
     try {
       const records = await pb.collection('tasks').getFullList({
         filter: `assignee = "${currentUser.id}"`,
-        sort: '-createdAt',
-        expand: 'boardId,assignee',
+        sort: '-created',
+        expand: 'board,assignee',
         $autoCancel: false
       });
       setTasks(records);
@@ -179,7 +179,7 @@ const MyTasksPage = () => {
         isOpen={isTaskModalOpen}
         onClose={() => setIsTaskModalOpen(false)}
         task={selectedTask}
-        boardId={selectedTask?.boardId}
+        boardId={selectedTask?.board}
         onSuccess={fetchTasks}
       />
 

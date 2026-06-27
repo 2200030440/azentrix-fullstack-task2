@@ -106,7 +106,7 @@ const BoardsPage = () => {
                   {boards.map((board) => (
                     <Card
                       key={board.id}
-                      className="cursor-pointer hover:shadow-lg transition-all duration-200"
+                      className="cursor-pointer rounded-2xl border border-border/40 bg-card/65 hover:bg-card hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 transition-all duration-200"
                       onClick={() => navigate(`/board/${board.id}`)}
                     >
                       <CardHeader>
