@@ -1,7 +1,0 @@
-{
-     "name": "pocketbase",
-     "scripts": {
-       "dev": "pocketbase.exe serve",
-       "start": "pocketbase.exe serve"
-     }
-   }

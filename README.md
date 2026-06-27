@@ -6,18 +6,18 @@ A lightweight, self-hostable task collaboration tool for remote teams. Built as 
 
 ## 📋 Problem Statement
 
-Remote teams lack a lightweight, self-hostable task collaboration tool. Most existing tools are either too bloated or too expensive for small teams. TaskFlow solves this with a simple, fast, self-hostable kanban board.
+Remote teams lack a lightweight, self-hostable task collaboration tool. Most existing tools are either too bloated or too expensive for small teams. TaskFlow solves this with a simple, fast, deployable kanban board.
 
 ---
 
 ## ✨ Features
 
-- 🔐 **Authentication** — Register and log in via PocketBase (token-based auth)
+- 🔐 **Authentication** — Register and log in with JWT-based auth
 - 📋 **Boards & Columns** — Boards contain To Do / In Progress / Done columns
 - 🖱️ **Drag-and-Drop** — Move task cards between columns
 - 📝 **Task Details** — Title, description, assignee, due date, and priority (Low / Medium / High)
 - 💬 **Comments** — Discuss tasks directly on the card
-- 🌐 **Real-time Sync** — PocketBase WebSocket subscriptions update both users' boards instantly, no refresh needed
+- 🌐 **Real-time Sync** — Socket.io WebSocket subscriptions update both users' boards instantly
 - 👥 **Role-Based Access** — Admins can manage all cards; Members can only manage cards assigned to them
 - 📊 **Dashboard** — Live stats: total tasks, completed tasks, completion rate
 
@@ -27,14 +27,16 @@ Remote teams lack a lightweight, self-hostable task collaboration tool. Most exi
 
 **Frontend**
 - React 18 + Vite
-- Tailwind CSS
-- shadcn/ui components
+- Tailwind CSS + shadcn/ui components
 - React Router
-- date-fns
+- Socket.io Client
 
 **Backend**
-- PocketBase (self-hosted backend + database + real-time engine)
-- WebSocket subscriptions for live updates
+- Node.js + Express
+- MongoDB Atlas (cloud database)
+- Socket.io for real-time WebSocket events
+- JWT Authentication
+- Mongoose ODM
 
 ---
 
@@ -45,6 +47,7 @@ Remote teams lack a lightweight, self-hostable task collaboration tool. Most exi
 | Create boards/tasks | ✅ | ✅ |
 | Edit/delete own tasks | ✅ | ✅ |
 | Edit/delete any task | ✅ | ❌ |
+| Manage users/roles | ✅ | ❌ |
 | View dashboard | ✅ | ✅ |
 
 ---
@@ -53,64 +56,66 @@ Remote teams lack a lightweight, self-hostable task collaboration tool. Most exi
 
 ### Prerequisites
 - Node.js (v18+)
-- PocketBase binary ([download here](https://pocketbase.io/docs/))
 
 ### 1. Clone the repo
 ```bash
-git clone [YOUR_REPO_URL]
+git clone https://github.com/2200030440/azentrix-fullstack-task2.git
 cd azentrix-fullstack-task2
 ```
 
-### 2. Start PocketBase
+### 2. Install dependencies
 ```bash
-cd pocketbase
-./pocketbase serve
-```
-PocketBase admin UI will be available at `http://127.0.0.1:8090/_/`
-
-### 3. Start the frontend
-```bash
-cd apps/web
 npm install
+cd apps/web && npm install
+cd ../server && npm install
+```
+
+### 3. Configure environment
+Create `apps/server/.env`:
+```env
+PORT=8090
+MONGO_URI=mongodb+srv://2200030440:2200030440@cluster1.q4yijny.mongodb.net/?appName=Cluster1
+JWT_SECRET=super_secret_taskflow_key_123_abc_xyz
+```
+
+Create `apps/web/.env`:
+```env
+VITE_PB_URL=http://127.0.0.1:8090
+```
+
+### 4. Start both servers
+```bash
 npm run dev
 ```
-App will be available at `http://localhost:5173`
-
-### 4. Environment setup
-Update `apps/web/src/lib/pocketbaseClient.js` with your PocketBase URL if different from the default local instance.
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:8090`
 
 ---
 
 ## 🌐 Live Demo
 
-- **App:** https://taskflow-web-n8zk.vercel.app/login
-- **PocketBase backend:** Self-hosted PocketBase (local)
-
-**Demo credentials:**
-- Admin: `admin@taskflow.com` / `[password]`
-- Member: `[email]` / `[password]`
+- **App (Frontend):** Deployed on Vercel
+- **Backend API:** Deployed on Render
+- **Database:** MongoDB Atlas
 
 ---
 
-## 📸 Screenshots
+## 🗄️ Database Structure (MongoDB Collections)
 
-![Dashboard](./screenshots/dashboard.png)
-![Board View](./screenshots/board.png)
-![Login](./screenshots/login.png)
-![Kanban](./screenshots/kanban.png)
-
----
-
-## 🗄️ Database Structure (PocketBase Collections)
-
-- **users** — id, email, name, avatar, role (admin/member)
-- **boards** — id, name, owner, members
+- **users** — id, email, name, avatar, role (admin/member), password (hashed)
+- **boards** — id, name, description, owner, members[]
 - **tasks** — id, title, description, board, status, priority, assignee, due_date
 - **comments** — id, task, user, content, created
-- **activity_logs** — id, board, user, action, created
+- **activitylogs** — id, board, user, action, created
 
 ---
 
 ## 📌 Project Status
 
-Built as a course/portfolio project demonstrating multi-user auth, real-time sync, drag-and-drop kanban boards, and role-based permissions on a free-tier deployable stack.
+Built as a fullstack portfolio project demonstrating:
+- Multi-user JWT authentication
+- Real-time WebSocket sync via Socket.io
+- Drag-and-drop kanban boards
+- Role-based access control
+- MongoDB Atlas cloud database
+- Free-tier deployment on Render + Vercel
