@@ -509,8 +509,15 @@ io.on('connection', (socket) => {
   });
 });
 
-// Start Server
+// Start Server (local dev) or export for Vercel
 const PORT = process.env.PORT || 8090;
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Express and Socket.io server running at http://0.0.0.0:${PORT}`);
-});
+if (process.env.VERCEL) {
+  // Vercel handles the HTTP server — just export
+  console.log('Running on Vercel serverless');
+} else {
+  server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Express and Socket.io server running at http://0.0.0.0:${PORT}`);
+  });
+}
+
+export default server;
