@@ -56,13 +56,28 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Database Connection
+// Database Connection — serverless-safe pattern
 const mongoURI = process.env.MONGO_URI;
-if (mongoURI && mongoose.connection.readyState === 0) {
-  mongoose.connect(mongoURI)
-    .then(() => console.log('Connected to MongoDB Atlas successfully!'))
-    .catch((err) => console.error('MongoDB connection error:', err));
+let isConnected = false;
+
+async function connectDB() {
+  if (isConnected && mongoose.connection.readyState === 1) return;
+  if (!mongoURI) throw new Error('MONGO_URI not set');
+  await mongoose.connect(mongoURI);
+  isConnected = true;
+  console.log('Connected to MongoDB Atlas successfully!');
 }
+
+// Middleware: ensure DB connected before every request
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('DB connection failed:', err.message);
+    res.status(500).json({ message: 'Database connection failed' });
+  }
+});
 
 // Helpers
 function generateToken(userId, email, role) {
