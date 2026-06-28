@@ -27,7 +27,7 @@ const ActivityLogsPage = () => {
   const fetchActivities = async () => {
     try {
       const records = await pb.collection('activityLogs').getFullList({
-        sort: '-createdAt',
+        sort: '-created',
         expand: 'userId,taskId,boardId',
         $autoCancel: false
       });
@@ -123,7 +123,7 @@ const ActivityLogsPage = () => {
                               <p className="text-sm text-muted-foreground mt-1">{activity.details}</p>
                             )}
                             <p className="text-xs text-muted-foreground mt-2">
-                              {format(new Date(activity.createdAt), 'MMM d, yyyy h:mm a')}
+                              {format(new Date(activity.created || activity.createdAt || new Date()), 'MMM d, yyyy h:mm a')}
                             </p>
                           </div>
                         </div>

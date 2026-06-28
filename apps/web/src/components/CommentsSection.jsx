@@ -36,7 +36,7 @@ const CommentsSection = ({ isOpen, onClose, task }) => {
     try {
       const records = await pb.collection('comments').getFullList({
         filter: `taskId = "${task.id}"`,
-        sort: '-createdAt',
+        sort: '-created',
         expand: 'userId',
         $autoCancel: false
       });
@@ -117,7 +117,7 @@ const CommentsSection = ({ isOpen, onClose, task }) => {
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-sm">{user?.name}</span>
                           <span className="text-xs text-muted-foreground">
-                            {format(new Date(comment.createdAt), 'MMM d, h:mm a')}
+                            {format(new Date(comment.created || comment.createdAt || new Date()), 'MMM d, h:mm a')}
                           </span>
                         </div>
                         {comment.userId === currentUser.id && (
