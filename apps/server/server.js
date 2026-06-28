@@ -493,6 +493,14 @@ const handleActivityLogsGet = async (req, res) => {
 app.get('/api/collections/activityLogs', authenticateToken, handleActivityLogsGet);
 app.get('/api/collections/activity_logs', authenticateToken, handleActivityLogsGet);
 
+// Health Check endpoints (used by Render to verify service is alive)
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', message: 'TaskFlow API is running', version: '1.0.0' });
+});
+app.get('/health', (req, res) => {
+  res.json({ status: 'healthy', database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected' });
+});
+
 // Socket Connection handling
 io.on('connection', (socket) => {
   console.log('Client connected for real-time updates:', socket.id);
