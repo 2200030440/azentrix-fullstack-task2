@@ -7,8 +7,10 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import pb from '@/lib/pocketbaseClient';
+import { useAuth } from '@/contexts/AuthContext.jsx';
 
 const TaskModal = ({ isOpen, onClose, task, boardId, onSuccess }) => {
+  const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState([]);
   const [formData, setFormData] = useState({
@@ -41,11 +43,19 @@ const TaskModal = ({ isOpen, onClose, task, boardId, onSuccess }) => {
 
   const fetchBoardMembers = async () => {
     try {
-      const board = await pb.collection('boards').getOne(boardId, {
-        expand: 'members',
-        $autoCancel: false
-      });
-      setMembers(board.expand?.members || []);
+      if (currentUser?.role === 'admin') {
+        const allUsers = await pb.collection('users').getFullList({
+          sort: 'name',
+          $autoCancel: false
+        });
+        setMembers(allUsers);
+      } else {
+        const board = await pb.collection('boards').getOne(boardId, {
+          expand: 'members',
+          $autoCancel: false
+        });
+        setMembers(board.expand?.members || []);
+      }
     } catch (error) {
       console.error('Error fetching members:', error);
     }
