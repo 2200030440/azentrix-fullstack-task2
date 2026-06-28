@@ -1,6 +1,19 @@
-# 🚀 TaskFlow - Multi-User Task Management System
+# 🚀 TaskFlow — Multi-User Task Management System
 
-A lightweight, self-hostable task collaboration tool for remote teams. Built as a mini-Trello alternative — real-time boards, drag-and-drop cards, and role-based permissions, without the bloat or cost of larger tools.
+> A real-time Kanban board for remote teams. Built as a mini-Trello alternative with drag-and-drop, role-based access, and live collaboration.
+
+---
+
+## 🌐 Live Links
+
+| | Link |
+|---|---|
+| 🖥️ **Live App** | [https://azentrix-fullstack-task2-web.vercel.app](https://azentrix-fullstack-task2-web.vercel.app) |
+| ⚙️ **Backend API** | [https://taskflow-backend-e7ka.onrender.com](https://taskflow-backend-e7ka.onrender.com) |
+| 🔍 **API Health** | [https://taskflow-backend-e7ka.onrender.com/health](https://taskflow-backend-e7ka.onrender.com/health) |
+| 📦 **GitHub Repo** | [https://github.com/2200030440/azentrix-fullstack-task2](https://github.com/2200030440/azentrix-fullstack-task2) |
+
+> ⚠️ **Note:** The backend is hosted on Render's free tier — it may take **~30 seconds** to wake up after inactivity. Please wait if the first request is slow.
 
 ---
 
@@ -17,8 +30,8 @@ Remote teams lack a lightweight, self-hostable task collaboration tool. Most exi
 - 🖱️ **Drag-and-Drop** — Move task cards between columns
 - 📝 **Task Details** — Title, description, assignee, due date, and priority (Low / Medium / High)
 - 💬 **Comments** — Discuss tasks directly on the card
-- 🌐 **Real-time Sync** — Socket.io WebSocket subscriptions update both users' boards instantly
-- 👥 **Role-Based Access** — Admins can manage all cards; Members can only manage cards assigned to them
+- 🌐 **Real-time Sync** — Socket.io WebSocket subscriptions update all users' boards instantly
+- 👥 **Role-Based Access** — Admins manage all cards; Members manage only their assigned cards
 - 📊 **Dashboard** — Live stats: total tasks, completed tasks, completion rate
 
 ---
@@ -30,6 +43,7 @@ Remote teams lack a lightweight, self-hostable task collaboration tool. Most exi
 - Tailwind CSS + shadcn/ui components
 - React Router
 - Socket.io Client
+- Deployed on **Vercel**
 
 **Backend**
 - Node.js + Express
@@ -37,6 +51,7 @@ Remote teams lack a lightweight, self-hostable task collaboration tool. Most exi
 - Socket.io for real-time WebSocket events
 - JWT Authentication
 - Mongoose ODM
+- Deployed on **Render**
 
 ---
 
@@ -71,11 +86,13 @@ cd ../server && npm install
 ```
 
 ### 3. Configure environment
+
 Create `apps/server/.env`:
 ```env
 PORT=8090
-MONGO_URI=mongodb+srv://2200030440:2200030440@cluster1.q4yijny.mongodb.net/?appName=Cluster1
+MONGO_URI=mongodb+srv://2200030440:2200030440@cluster1.q4yijny.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1
 JWT_SECRET=super_secret_taskflow_key_123_abc_xyz
+UPLOAD_DIR=uploads
 ```
 
 Create `apps/web/.env`:
@@ -92,21 +109,15 @@ npm run dev
 
 ---
 
-## 🌐 Live Demo
-
-- **App (Frontend):** [https://azentrix-fullstack-task2-web.vercel.app](https://azentrix-fullstack-task2-web.vercel.app)
-- **Backend API:** [https://taskflow-backend-e7ka.onrender.com](https://taskflow-backend-e7ka.onrender.com)
-- **Database:** MongoDB Atlas (Cluster1)
-
----
-
 ## 🗄️ Database Structure (MongoDB Collections)
 
-- **users** — id, email, name, avatar, role (admin/member), password (hashed)
-- **boards** — id, name, description, owner, members[]
-- **tasks** — id, title, description, board, status, priority, assignee, due_date
-- **comments** — id, task, user, content, created
-- **activitylogs** — id, board, user, action, created
+| Collection | Fields |
+|---|---|
+| **users** | id, email, name, avatar, role (admin/member), password (hashed) |
+| **boards** | id, name, description, owner, members[] |
+| **tasks** | id, title, description, board, status, priority, assignee, due_date |
+| **comments** | id, task, user, content, created |
+| **activitylogs** | id, board, user, action, created |
 
 ---
 
