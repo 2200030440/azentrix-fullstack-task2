@@ -94,9 +94,9 @@ npm run dev
 
 ## 🌐 Live Demo
 
-- **App (Frontend):** Deployed on Vercel
-- **Backend API:** Deployed on Render
-- **Database:** MongoDB Atlas
+- **App (Frontend):** [https://azentrix-fullstack-task2-web.vercel.app](https://azentrix-fullstack-task2-web.vercel.app)
+- **Backend API:** [https://azentrix-fullstack-task2-server.vercel.app](https://azentrix-fullstack-task2-server.vercel.app)
+- **Database:** MongoDB Atlas (Cluster1)
 
 ---
 
