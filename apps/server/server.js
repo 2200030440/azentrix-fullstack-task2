@@ -340,6 +340,14 @@ app.post('/api/collections/tasks', authenticateToken, async (req, res) => {
   try {
     const newTask = new Task(req.body);
     const saved = await newTask.save();
+    
+    // Add assignee to board members list if set
+    if (req.body.assignee) {
+      await Board.findByIdAndUpdate(req.body.board, {
+        $addToSet: { members: req.body.assignee }
+      });
+    }
+
     const populated = await Task.findById(saved._id).populate('assignee');
     const record = formatRecord(populated, 'assignee', 'tasks');
     io.emit('tasks:change', { action: 'create', record });
@@ -355,6 +363,14 @@ app.patch('/api/collections/tasks/:id', authenticateToken, async (req, res) => {
     const oldTask = await Task.findById(req.params.id);
     const updated = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('assignee');
     if (!updated) return res.status(404).json({ message: 'Task not found' });
+
+    // Add assignee to board members list if updated/set
+    if (req.body.assignee) {
+      await Board.findByIdAndUpdate(updated.board, {
+        $addToSet: { members: req.body.assignee }
+      });
+    }
+
     const record = formatRecord(updated, 'assignee', 'tasks');
     io.emit('tasks:change', { action: 'update', record });
     let action = 'edited';

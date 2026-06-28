@@ -120,6 +120,29 @@ const BoardDetailPage = () => {
     const taskId = e.dataTransfer.getData('taskId');
     if (!taskId) return;
 
+    // Find the task locally to check assignee
+    let taskToMove = null;
+    Object.values(tasks).forEach(colTasks => {
+      const found = colTasks.find(t => t.id === taskId);
+      if (found) taskToMove = found;
+    });
+
+    if (!taskToMove) return;
+
+    const isAdmin = currentUser?.role === 'admin';
+    const isAssignee = taskToMove.assignee === currentUser?.id;
+
+    if (!isAdmin) {
+      if (!isAssignee) {
+        toast.error("You can only move tasks assigned to you");
+        return;
+      }
+      if (newStatus === 'done') {
+        toast.error("Only admins can move tasks to Done to verify and accept them");
+        return;
+      }
+    }
+
     try {
       await pb.collection('tasks').update(
         taskId,
@@ -127,7 +150,7 @@ const BoardDetailPage = () => {
         { $autoCancel: false }
       );
       fetchTasks();
-      toast.success('Task moved successfully');
+      toast.success('Task status updated successfully');
     } catch (error) {
       console.error('Error moving task:', error);
       toast.error('Failed to move task');

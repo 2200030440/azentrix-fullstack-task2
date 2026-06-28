@@ -123,7 +123,9 @@ const TaskModal = ({ isOpen, onClose, task, boardId, onSuccess }) => {
                 <SelectContent>
                   <SelectItem value="todo">To Do</SelectItem>
                   <SelectItem value="in_progress">In Progress</SelectItem>
-                  <SelectItem value="done">Done</SelectItem>
+                  {(currentUser?.role === 'admin' || formData.status === 'done') && (
+                    <SelectItem value="done">Done</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             </div>

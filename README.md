@@ -90,7 +90,7 @@ cd ../server && npm install
 Create `apps/server/.env`:
 ```env
 PORT=8090
-MONGO_URI=mongodb+srv://2200030440:2200030440@cluster1.q4yijny.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1
+MONGO_URI=mongodb+srv://2200030440:<dp_password>@cluster1.q4yijny.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1
 JWT_SECRET=super_secret_taskflow_key_123_abc_xyz
 UPLOAD_DIR=uploads
 ```
