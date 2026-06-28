@@ -2,12 +2,17 @@ services:
   - type: web
     name: taskflow-backend
     runtime: node
+    rootDir: .
     buildCommand: npm install
     startCommand: node apps/server/server.js
     envVars:
       - key: MONGO_URI
-        value: mongodb+srv://2200030440:2200030440@cluster1.q4yijny.mongodb.net/?appName=Cluster1
+        value: mongodb+srv://2200030440:2200030440@cluster1.q4yijny.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1
       - key: JWT_SECRET
         value: super_secret_taskflow_key_123_abc_xyz
       - key: PORT
         value: 10000
+      - key: UPLOAD_DIR
+        value: uploads
+      - key: NODE_VERSION
+        value: 20
