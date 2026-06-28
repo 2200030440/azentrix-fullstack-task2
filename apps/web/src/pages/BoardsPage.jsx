@@ -30,12 +30,17 @@ const BoardsPage = () => {
 
   const fetchBoards = async () => {
     try {
-      const records = await pb.collection('boards').getFullList({
-        filter: `owner = "${currentUser.id}" || members ~ "${currentUser.id}"`,
+      const queryParams = {
         sort: '-created',
         expand: 'members',
         $autoCancel: false
-      });
+      };
+
+      if (currentUser?.role !== 'admin') {
+        queryParams.filter = `owner = "${currentUser.id}" || members ~ "${currentUser.id}"`;
+      }
+
+      const records = await pb.collection('boards').getFullList(queryParams);
       setBoards(records);
     } catch (error) {
       console.error('Error fetching boards:', error);

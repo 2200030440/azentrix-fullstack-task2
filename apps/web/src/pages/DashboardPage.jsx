@@ -42,11 +42,13 @@ const DashboardPage = () => {
       });
 
       // Filter boards where user is owner or in members list
-      const myBoards = boards.filter(
-        (b) =>
-          b.owner === currentUser.id ||
-          (Array.isArray(b.members) && b.members.includes(currentUser.id))
-      );
+      const myBoards = currentUser?.role === 'admin'
+        ? boards
+        : boards.filter(
+            (b) =>
+              b.owner === currentUser.id ||
+              (Array.isArray(b.members) && b.members.includes(currentUser.id))
+          );
 
       const boardIds = myBoards.map((b) => b.id);
 
