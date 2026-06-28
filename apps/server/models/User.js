@@ -5,7 +5,11 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   name: { type: String, default: '' },
   avatar: { type: String, default: '' },
-  role: { type: String, enum: ['admin', 'member'], default: 'member' }
+  role: { type: String, enum: ['admin', 'member'], default: 'member' },
+  standupYesterday: { type: String, default: '' },
+  standupToday: { type: String, default: '' },
+  standupBlockers: { type: String, default: '' },
+  standupDate: { type: String, default: '' }
 }, {
   timestamps: { createdAt: 'created', updatedAt: 'updated' }
 });

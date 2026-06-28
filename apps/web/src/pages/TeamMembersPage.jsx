@@ -16,9 +16,11 @@ const TeamMembersPage = () => {
   const { currentUser } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [members, setMembers] = useState([]);
+  const [boards, setBoards] = useState([]);
 
   useEffect(() => {
     fetchMembers();
+    fetchBoards();
   }, []);
 
   const fetchMembers = async () => {
@@ -30,6 +32,17 @@ const TeamMembersPage = () => {
       setMembers(records);
     } catch (error) {
       console.error('Error fetching members:', error);
+    }
+  };
+
+  const fetchBoards = async () => {
+    try {
+      const records = await pb.collection('boards').getFullList({
+        $autoCancel: false
+      });
+      setBoards(records);
+    } catch (error) {
+      console.error('Error fetching boards:', error);
     }
   };
 
@@ -123,6 +136,21 @@ const TeamMembersPage = () => {
                                   </Badge>
                                 )}
                               </div>
+                            </div>
+
+                            <div className="pt-2 border-t border-border/40 mt-1">
+                              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Assigned Boards</p>
+                              {boards.filter(b => b.owner === member.id || (Array.isArray(b.members) && b.members.includes(member.id))).length === 0 ? (
+                                <p className="text-xs text-muted-foreground mt-1">No boards assigned</p>
+                              ) : (
+                                <div className="flex flex-wrap gap-1 mt-1.5">
+                                  {boards.filter(b => b.owner === member.id || (Array.isArray(b.members) && b.members.includes(member.id))).map(b => (
+                                    <Badge key={b.id} variant="outline" className="bg-primary/5 border-primary/20 text-xs">
+                                      {b.name}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              )}
                             </div>
 
                             {isAdminUser && (

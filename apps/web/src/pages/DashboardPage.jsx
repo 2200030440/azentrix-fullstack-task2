@@ -15,15 +15,23 @@ import { format } from 'date-fns';
 import pb from '@/lib/pocketbaseClient';
 
 const DashboardPage = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, updateProfile } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [stats, setStats] = useState({ total: 0, completed: 0, overdue: 0, activeMembers: 0 });
   const [activities, setActivities] = useState([]);
   const [standup, setStandup] = useState({ yesterday: '', today: '', blockers: '' });
+  const [teamStandups, setTeamStandups] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (currentUser) fetchDashboardData();
+    if (currentUser) {
+      fetchDashboardData();
+      setStandup({
+        yesterday: currentUser.standupYesterday || '',
+        today: currentUser.standupToday || '',
+        blockers: currentUser.standupBlockers || ''
+      });
+    }
   }, [currentUser]);
 
   const fetchDashboardData = async () => {
@@ -90,6 +98,19 @@ const DashboardPage = () => {
         // activity_logs may be empty or restricted — ignore
         setActivities([]);
       }
+
+      // Fetch all users to display team standups
+      try {
+        const users = await pb.collection('users').getFullList({
+          $autoCancel: false,
+        });
+        const activeStandups = users.filter(
+          (u) => u.standupToday || u.standupYesterday || u.standupBlockers
+        );
+        setTeamStandups(activeStandups);
+      } catch (err) {
+        console.error('Error fetching team standups:', err);
+      }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     }
@@ -100,8 +121,13 @@ const DashboardPage = () => {
     setLoading(true);
 
     try {
-      toast.success('Standup saved!');
-      // If you add a standups collection later, save here
+      await updateProfile({
+        standupYesterday: standup.yesterday,
+        standupToday: standup.today,
+        standupBlockers: standup.blockers,
+        standupDate: new Date().toISOString().split('T')[0]
+      });
+      toast.success('Daily Standup saved successfully!');
     } catch (error) {
       console.error('Error saving standup:', error);
       toast.error('Failed to save standup');
@@ -266,48 +292,106 @@ const DashboardPage = () => {
                 </Card>
               </div>
 
-              {/* Activity Feed */}
-              <Card className="rounded-2xl border-border/40 bg-card/60 shadow-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Activity className="h-5 w-5 text-primary" />
-                    Team Activity Feed
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {activities.length === 0 ? (
-                    <p className="text-center text-muted-foreground py-8">
-                      No recent activity
-                    </p>
-                  ) : (
-                    <div className="space-y-4">
-                      {activities.map((activity) => (
-                        <div
-                          key={activity.id}
-                          className="flex items-start gap-3 pb-4 border-b last:border-0"
-                        >
-                          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <Activity className="h-4 w-4 text-primary" />
+              {/* Activity Feed + Team Standups */}
+              <div className="grid gap-6 lg:grid-cols-2">
+                <Card className="rounded-2xl border-border/40 bg-card/60 shadow-sm">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Activity className="h-5 w-5 text-primary" />
+                      Team Activity Feed
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {activities.length === 0 ? (
+                      <p className="text-center text-muted-foreground py-8">
+                        No recent activity
+                      </p>
+                    ) : (
+                      <div className="space-y-4">
+                        {activities.map((activity) => (
+                          <div
+                            key={activity.id}
+                            className="flex items-start gap-3 pb-4 border-b last:border-0"
+                          >
+                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                              <Activity className="h-4 w-4 text-primary" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm">
+                                <span className="font-medium">
+                                  {activity.expand?.user?.name || 'Someone'}
+                                </span>{' '}
+                                <span className="text-muted-foreground">
+                                  {activity.action}
+                                </span>
+                              </p>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {format(new Date(activity.created), 'MMM d, h:mm a')}
+                              </p>
+                            </div>
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm">
-                              <span className="font-medium">
-                                {activity.expand?.user?.name || 'Someone'}
-                              </span>{' '}
-                              <span className="text-muted-foreground">
-                                {activity.action}
-                              </span>
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {format(new Date(activity.created), 'MMM d, h:mm a')}
-                            </p>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                <Card className="rounded-2xl border-border/40 bg-card/60 shadow-sm">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Activity className="h-5 w-5 text-primary" />
+                      Team Daily Standups
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="max-h-[400px] overflow-y-auto pr-1">
+                    {teamStandups.length === 0 ? (
+                      <p className="text-center text-muted-foreground py-8">
+                        No team standups posted yet
+                      </p>
+                    ) : (
+                      <div className="space-y-4">
+                        {teamStandups.map((member) => (
+                          <div
+                            key={member.id}
+                            className="pb-4 border-b last:border-0 space-y-2"
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                <span className="text-xs font-semibold text-primary">
+                                  {member.name?.charAt(0).toUpperCase() || 'U'}
+                                </span>
+                              </div>
+                              <span className="font-medium text-sm">{member.name}</span>
+                              {member.standupDate && (
+                                <span className="text-xs text-muted-foreground ml-auto">
+                                  {member.standupDate}
+                                </span>
+                              )}
+                            </div>
+                            <div className="pl-8 space-y-1 text-sm">
+                              {member.standupYesterday && (
+                                <p>
+                                  <span className="font-semibold text-muted-foreground text-xs">YESTERDAY:</span> {member.standupYesterday}
+                                </p>
+                              )}
+                              {member.standupToday && (
+                                <p>
+                                  <span className="font-semibold text-muted-foreground text-xs">TODAY:</span> {member.standupToday}
+                                </p>
+                              )}
+                              {member.standupBlockers && (
+                                <p className="text-rose-500">
+                                  <span className="font-semibold text-xs">BLOCKERS:</span> {member.standupBlockers}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </main>
         </div>

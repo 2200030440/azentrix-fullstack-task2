@@ -108,13 +108,19 @@ function parseFilter(filterStr) {
 
   const eqMatch = filterStr.match(/^(\w+)\s*=\s*"([^"]+)"$/);
   if (eqMatch) {
-    query[eqMatch[1]] = eqMatch[2];
+    let field = eqMatch[1];
+    if (field === 'taskId') field = 'task';
+    if (field === 'userId') field = 'user';
+    query[field] = eqMatch[2];
     return query;
   }
 
   const containsMatch = filterStr.match(/^(\w+)\s*~\s*"([^"]+)"$/);
   if (containsMatch) {
-    query[containsMatch[1]] = containsMatch[2];
+    let field = containsMatch[1];
+    if (field === 'taskId') field = 'task';
+    if (field === 'userId') field = 'user';
+    query[field] = containsMatch[2];
     return query;
   }
 
@@ -135,6 +141,12 @@ function formatRecord(record, expandStr, collectionName) {
   if (!record) return null;
   const json = record.toJSON();
   json.expand = {};
+
+  if (collectionName === 'comments') {
+    json.userId = json.user;
+    json.taskId = json.task;
+    json.message = json.content;
+  }
 
   if (expandStr) {
     const fields = expandStr.split(',').map(f => f.trim());
@@ -384,12 +396,17 @@ app.get('/api/collections/comments', authenticateToken, async (req, res) => {
 
 app.post('/api/collections/comments', authenticateToken, async (req, res) => {
   try {
-    const newComment = new Comment(req.body);
+    const commentData = {
+      task: req.body.taskId || req.body.task,
+      user: req.body.userId || req.body.user,
+      content: req.body.message || req.body.content
+    };
+    const newComment = new Comment(commentData);
     const saved = await newComment.save();
     const populated = await Comment.findById(saved._id).populate('user');
     const record = formatRecord(populated, 'user', 'comments');
     io.emit('comments:change', { action: 'create', record });
-    res.status(201).json(saved.toJSON());
+    res.status(201).json(record);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
